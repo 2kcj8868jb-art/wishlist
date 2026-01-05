@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stela's Closet</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    background-color: #fef7f0; /* hell beige */
+    color: #333;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff0f5; /* babypinke Akzente */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #dca0c6;
+  }
+  #menu-btn {
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+  nav {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #fff0f5;
+    padding: 50px 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transition: left 0.3s;
+  }
+  nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  nav li {
+    margin: 20px 0;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+  nav.open { left: 0; }
+  .container {
+    padding: 20px;
+  }
+  .category {
+    margin-bottom: 40px;
+  }
+  .category h2 {
+    font-size: 1.5em;
+    color: #dca0c6;
+    margin-bottom: 15px;
+  }
+  .product {
+    border: 1px solid #f0e0e5;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .product a {
+    text-decoration: none;
+    color: #333;
+  }
+  .product button {
+    background-color: #dca0c6;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #cart {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #dca0c6;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 50px;
+    cursor: pointer;
+  }
+  #cart-items {
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span id="menu-btn">&#9776;</span>
+  <h1>Stela's Closet</h1>
+  <div id="cart">🛒 <span id="cart-count">0€</span></div>
+</header>
+
+<nav id="sidebar">
+  <ul>
+    <li onclick="showCategory('beauty')">Beauty</li>
+    <li onclick="showCategory('technology')">Technology</li>
+    <li onclick="showCategory('room')">Roomstuff</li>
+    <li onclick="showCategory('accessories')">Accessories</li>
+  </ul>
+</nav>
+
+<div class="container" id="content">
+  <!-- Produkte werden hier geladen -->
+</div>
+
+<script>
+const menuBtn = document.getElementById('menu-btn');
+const sidebar = document.getElementById('sidebar');
+menuBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+});
+
+let cartTotal = 0;
+
+const products = {
+  beauty: [
+    {name:"Sky High Mascara", price:11.95, link:"https://www.dm.de/applink/maybelline-new-york-mascara-lash-sensational-sky-high-very-black-p30166967.html?appPageType=productdetails&appProductId=1572018&wt_mc=app.dm.pdsteilen.laufend"},
+    {name:"Mielle Rosemary Oil", price:12.29, link:"https://amzn.eu/d/6xNGZEM"},
+    {name:"Lash Serum", price:12, link:"https://www.douglas.de/de/p/5010641090"},
+    {name:"Milk MakeUp Jelly Blush Splash", price:27, link:"https://www.douglas.de/de/p/5011439043?variant=1180608"},
+    {name:"UV Lamp", price:10, link:"https://amzn.eu/d/epRKX4b"},
+    {name:"Builder Gel", price:16, link:"https://amzn.eu/d/4bqHHQX"}
+  ],
+  technology: [
+    {name:"Room diffuser glade", price:8.95, link:"https://www.dm.de/applink/glade-lufterfrischer-aromatherapy-diffuser-moment-of-zen-starterset-p5000204219890.html?appPageType=productdetails&appProductId=1616213&wt_mc=app.dm.pdsteilen.laufend"},
+    {name:"LED lights", price:11, link:"https://amzn.eu/d/eszUO7B"},
+    {name:"Wireless Charger", price:30, link:"https://amzn.eu/d/8iZaRsl"}
+  ],
+  room: [
+    {name:"Pen set", price:21, link:"https://www.faber-castell.de/produkte/Grip2010SetF%c3%bcllerKugelschreibercoconutmilk/201527"},
+    {name:"Peonies Fake", price:10, link:"https://amzn.eu/d/52ZdM3j"},
+    {name:"Satin-Pillowcase", price:19, link:"https://amzn.eu/d/1qKHrqV"},
+    {name:"Satin scrunchies", price:8.50, link:"https://amzn.eu/d/3JN6Py0"},
+    {name:"Set jewelry", price:48, link:"https://www.zalando.de/elli-set-ohrringe-silber-el051l2m1-d11.html"}
+  ],
+  accessories: []
+};
+
+function showCategory(cat){
+  const container = document.getElementById('content');
+  container.innerHTML = '';
+  products[cat].forEach(prod => {
+    const div = document.createElement('div');
+    div.className = 'product';
+    div.innerHTML = `
+      <a href="${prod.link}" target="_blank">${prod.name}</a>
+      <div>
+        <span>${prod.price}€</span>
+        <button onclick="addToCart(${prod.price})">Add</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function addToCart(price){
+  cartTotal += price;
+  document.getElementById('cart-count').innerText = cartTotal.toFixed(2)+'€';
+}
+</script>
+
+</body>
+</html>
